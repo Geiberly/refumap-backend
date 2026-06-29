@@ -36,6 +36,8 @@ class MapPoint extends Model
         'city',
         'state',
         'source',
+        'status',
+        'last_verified_at',
     ];
 
     protected $casts = [
