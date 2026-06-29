@@ -10,6 +10,29 @@ use Illuminate\Support\Facades\Storage;
 class CitizenReportController extends Controller
 {
     /**
+     * GET /api/public/reports
+     * Devuelve reportes ciudadanos verificados.
+     */
+    public function index(\Illuminate\Http\Request $request)
+    {
+        $query = CitizenReport::where('status', 'verified');
+        
+        if ($request->has('type')) {
+            $query->where('report_type', $request->type);
+        }
+
+        $reports = $query->latest('reviewed_at')->latest()->paginate(15);
+
+        // Ocultar campos sensibles (por si acaso)
+        $reports->getCollection()->transform(function ($report) {
+            $report->contact_phone = null;
+            return $report;
+        });
+
+        return response()->json($reports);
+    }
+
+    /**
      * POST /api/public/reports
      * Rate limit: 10 por minuto por IP (configurado en rutas).
      */

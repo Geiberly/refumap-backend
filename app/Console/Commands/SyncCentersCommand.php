@@ -129,7 +129,7 @@ class SyncCentersCommand extends Command
                             'longitude' => $longitude,
                             'contact_phone' => mb_substr($phone, 0, 30),
                             'notes' => $notes,
-                            'status' => $isActive ? 'active' : 'closed',
+                            'status' => $isActive ? 'verified' : 'closed',
                             'source' => 'official',
                             'description' => mb_substr("Importado desde ayudaparavenezuela.com. " . ($data['organization'] ?? ''), 0, 500)
                         ]

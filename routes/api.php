@@ -61,6 +61,8 @@ Route::prefix('public')->name('public.')->group(function () {
          
     Route::post('help-points', [\App\Http\Controllers\Api\Public\MapPointReportController::class, 'storeHelpPoint'])
          ->name('reports.help-point')->middleware('throttle:10,1');
+    Route::get('reports', [PublicReportController::class, 'index'])
+         ->name('reports.index')->middleware('throttle:60,1');
     Route::post('reports', [PublicReportController::class, 'store'])
          ->name('reports.store')
          ->middleware('throttle:10,1');
