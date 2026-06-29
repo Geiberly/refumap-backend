@@ -30,10 +30,12 @@ class SyncCentersCommand extends Command
     {
         $this->info('Starting sync from ayudaparavenezuela.com API...');
 
-        // Get category ID for 'centro-acopio'
-        $category = Category::where('slug', 'centro-acopio')->first();
-        if (!$category) {
-            $this->error('Category "centro-acopio" not found in the database. Please run CategoriesSeeder first.');
+        // Get category IDs
+        $acopioCategory = Category::where('slug', 'centro-acopio')->first();
+        $refugioCategory = Category::where('slug', 'refugio')->first();
+
+        if (!$acopioCategory || !$refugioCategory) {
+            $this->error('Required categories (centro-acopio, refugio) not found in the database. Please run CategoriesSeeder first.');
             return 1;
         }
 
@@ -115,6 +117,8 @@ class SyncCentersCommand extends Command
 
                     $isActive = ($data['is_active'] ?? 'true') === 'true';
 
+                    $currentCategory = ($type === 'help_points') ? $refugioCategory : $acopioCategory;
+
                     // Update or create based on exact external ID in notes or latitude/longitude match
                     // But simpler: just try to match by name and lat/long rounded to 4 decimals, or rely on updateOrCreate with lat/long.
                     // We'll match by name to avoid duplicate creations.
@@ -123,7 +127,7 @@ class SyncCentersCommand extends Command
                             'name' => mb_substr($name, 0, 255),
                         ],
                         [
-                            'category_id' => $category->id,
+                            'category_id' => $currentCategory->id,
                             'address' => mb_substr($address, 0, 255),
                             'latitude' => $latitude,
                             'longitude' => $longitude,
